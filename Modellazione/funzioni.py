@@ -15,7 +15,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn import datasets, svm, model_selection
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA
-from sklearn_features.transformers import DataFrameSelector
 from pandas import DataFrame
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -29,7 +28,7 @@ from sklearn import tree
 from sklearn.neighbors import NearestNeighbors
 from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
 from sklearn.pipeline import Pipeline, FeatureUnion
-from sklearn.preprocessing import Imputer, LabelBinarizer, LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelBinarizer, LabelEncoder, OneHotEncoder
 
 # TUTTI I PARAMETRI NELLE FUNZIONI SONO PASSATI PER RIFERIMENTO, AVVIENE QUINDI SIDE EFFECT A MENO DI COPIA ESPLICITA
 

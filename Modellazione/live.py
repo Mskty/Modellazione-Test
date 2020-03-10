@@ -1,4 +1,4 @@
-from Persone_Fisiche.funzioni import *
+from funzioni import *
 
 # regex regular expression
 
