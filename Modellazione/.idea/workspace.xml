@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a6362a1b-1331-4cc5-a05b-d5471438e31b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/funzioni.py" beforeDir="false" afterPath="$PROJECT_DIR$/funzioni.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/live.py" beforeDir="false" afterPath="$PROJECT_DIR$/live.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modellazione.py" beforeDir="false" afterPath="$PROJECT_DIR$/modellazione.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocessamento.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pulizia.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scaler.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualization.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualizzazione.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualizzazione.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +15,9 @@
   </component>
   <component name="ProjectId" id="1YlFrTQUJS3lI9XfpYGDML52Hbw" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -81,7 +77,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
