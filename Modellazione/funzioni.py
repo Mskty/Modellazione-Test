@@ -32,7 +32,11 @@ from sklearn.preprocessing import LabelBinarizer, LabelEncoder, OneHotEncoder
 
 # TUTTI I PARAMETRI NELLE FUNZIONI SONO PASSATI PER RIFERIMENTO, AVVIENE QUINDI SIDE EFFECT A MENO DI COPIA ESPLICITA
 
-"""--------------------------------------------------UTILITIES PER DATASET-----------------------------------------------------"""
+"""
+File contenente funzioni di uso meno specifico per lo studio dei dati e degli algoritmi
+"""
+
+"""--------------------------------------------------UTILITIES PER DATASET-------------------------------------------"""
 
 
 def set_dataset_display_properties(width=1000, columns=200, rows=200):

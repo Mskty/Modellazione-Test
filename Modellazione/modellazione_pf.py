@@ -23,9 +23,10 @@ from imblearn.under_sampling import NearMiss, RandomUnderSampler
 from sklearn.linear_model import Lasso, LogisticRegression
 
 """
-In questo file verranno elaborati i dati forniti dal dataset in forma definitiva allo scopo di trovare il modello 
+In questo file verranno elaborati i dati forniti dal dataset riguardanti le Persone Fisiche
+in forma definitiva allo scopo di trovare il modello 
 predittivo migliore. La forma degli esempi non verrà modificata, ma sarà divisio il set inziale in training e test set,
-allo scopo di valutare le performance dei vari modelli utilizzati. La feature colonna contenente la label di classse 
+allo scopo di valutare le performance dei vari modelli utilizzati. La feature colonna contenente la label di classe 
 per ogni esempio è chiamata 'label'.
 I modelli proposti includono i seguenti algoritmi forniti dalla libreria scikit-lean:
 1. LogisticRegressorClassfier
@@ -34,7 +35,8 @@ I modelli proposti includono i seguenti algoritmi forniti dalla libreria scikit-
 4. DecisionTreeClassifier
 5. RandomForestClassifier
 6. ExtremeGradientBoostingClassifier (xgboost)
-7. NeuralNetwork MultiLayerPerceptronClassifier
+Vengono in oltre fornite funzioni per produrre grafici utili a visualizzare le performance di tali algoritmi in 
+condizioni di dataset molto sbilanciati come in questo caso: la curva precision recall e quella roc-auc
 """
 
 """----------------------------------------------------CLASSI-----------------------------------------------------------
@@ -75,7 +77,8 @@ def generate_figure_prc(xsize=9, ysize=9):
     ax.set_title("Precision Recall Curves")
     # Aggiunta ottimale (rapporto t 2 f 8)
     ax.plot([0, 1, 1], [1, 1, 0.2], 'g-', linewidth=3, label="Classificatore Perfetto (AP = 1.0)")
-    # Aggiunta peggiore
+    # Aggiunta peggiore, valore calcolato addestrando un uniform_dummy su training set e
+    # poi utilizzando la funzione skl.metrics.plot_precision_recall_curve(uniform_dummy, scaled_X_test, Y_test)
     ax.plot([0, 0, 1], [1, 0.2, 0.2], 'r-', linewidth=3, label="Selezione Casuale (AP = 0.2)")
     # Legenda
     ax.legend(loc="upper right", fontsize='small')
@@ -534,35 +537,6 @@ def model_feature_selection(trainset: pd.DataFrame, model, testset: pd.DataFrame
     return columns_retained_FromMode
 
 
-def train_test_ruolo(clean_dataset_path):
-    """
-    Suddivisione standard in trainset e testset a partire dal dataframe preparato nelle fasi precedenti
-    :param clean_dataset_path: percorso del file csv contenente il dataset pulito e preparato
-    :return:
-    """
-    # Load Dataset
-    df: pd.DataFrame = load_raw_data(clean_dataset_path)
-
-    # Droppo le colonne che non serviranno nella elaborazione
-    df.drop(columns=["idAnagrafica", "DataPrimaNotifica", "IndirizzoResidenza", "Provincia", "Pagato120Giorni"],
-            inplace=True)
-
-    # Divisione test out of sample e training in sample
-    trainset = df.loc[(df.DataCaricoTitolo != '2017-03-08')]
-    testset = df.loc[(df.DataCaricoTitolo == '2017-03-08')]
-
-    # Drop della colonna una volta separati i due set
-    trainset.drop(columns="DataCaricoTitolo", inplace=True)
-    testset.drop(columns="DataCaricoTitolo", inplace=True)
-
-    # Mescolo le righe del training set
-    trainset = shuffle(trainset, random_state=42)
-
-    # Salvo i dataset con UI:
-    save_dataset(trainset)
-    save_dataset(testset)
-
-
 def separazione_label(trainset: pd.DataFrame, testset: pd.DataFrame = None, test=False):
     """
     Separa i dataframe trainset e testset nelle rispettive componenti input (features) e output (label)
@@ -669,7 +643,6 @@ X_trainsmt, Y_trainsmt = smt.fit_sample(X_train,
                                         Y_train)  # X e Y contengono ora le due classi in modo bilanciato [15124, 15124]
 
 # Standard Scaled dataset
-"""scaler = joblib.load("scaler.pkl")"""
 data = trainset.copy()
 categorical_data = data[["Telefono", "Deceduto", "CittadinanzaItaliana", "Estero", "NuovoContribuente", "label"]]
 data.drop(columns=["Telefono", "Deceduto", "CittadinanzaItaliana", "Estero", "NuovoContribuente", "label"],
@@ -719,7 +692,7 @@ params_forest = {
 }
 params_svm_rbf = {
     'C': [0.001, 0.01, 0.1, 1, 10, 100],
-    'gamma': [0.001, 0.01, 0.1, 1],
+    'gamma': [0.001, 0.01, 0.1, 1, 'scale'],
 }
 
 params_svm_linear = {
@@ -735,6 +708,13 @@ params_xgboost = {"learning_rate": [0.10, 0.20, 0.30],
                   "colsample_bytree": [0.3, 0.4, 0.7, 1.0]}
 
 # BEST VERSION OF ALGORITHMS AFTER GRID SEARCH
+"""
+ESEMPIO esecuzione e risultati grid search con rispettivi parametri:
+
+bestlogistic, _, _=grid_search(params_logistic,logistic,scaled_X_train,Y_train)
+
+stampa a schermo il miglior algoritmo di LogisticRegression ottenibile combinando i parametri in params_logistic
+"""
 bestlogistic = LogisticRegression(C=100, class_weight='balanced', dual=False,
                                   fit_intercept=True, intercept_scaling=1, l1_ratio=None,
                                   max_iter=1000, multi_class='auto', n_jobs=None, penalty='l1',
@@ -771,6 +751,8 @@ bestxgboost = XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=
                             silent=None, subsample=1, verbosity=1)
 
 """# MAKE GRAPHS
+
+-------------------------------------VANNO ESEGUITI SU CONSOLE IN QUANTO FANNO COMPARIRE LE FIGURE----------------------
 
 # PRC
 fig, ax = generate_figure_prc()
@@ -930,74 +912,4 @@ fig.show()"""
 
 
 
-"""
-# RANDOM FEATURE SELECTION
-scaled_X_train, scaled_Y_train, scaled_X_test, scaled_Y_test = random_feature_selection(scaledtrain, scaledtest,
-                                                                                        test=True)"""
-"""
-#PARAMS FOR GRID SEARCH
 
-
-
-forestparams = {
-    'bootstrap': [True, False],
-    'n_jobs': [-1],
-    'max_depth': [10, 30, None],
-    'max_features': ['auto', 'log2'],
-    'min_samples_leaf': [1, 6],
-    'min_samples_split': [2, 10],
-    'n_estimators': [200, 500]
-}
-forestparams2 = {
-    'n_estimators': [100, 200],
-    'max_depth': [10, 50, 100],
-    'min_samples_split': [2, 4],
-    'max_features': ['sqrt', 'log2']
-}
-
-
-
-svmparams = {
-    'C': [0.001, 0.01, 0.1, 1, 10],
-    'gamma': [0.001, 0.01, 0.1, 1],
-}
-"""
-
-"""
-#TSNE
-X_embedded50 = TSNE(n_components=2, perplexity=50.0, random_state=42).fit_transform(X_train)
-scatter_plot_2d(X_embedded50[:,0],X_embedded50[:,1],Y_train,"Training set 2d TSNE", "Primo componente", "Secondo componente")
-"""
-
-"""
-#SCALING. SMOTE e random feature selection
-
-scaler=joblib.load("scaler.pkl")
-scaledtrain=feature_scaling(trainset,scaler)
-scaledtest=feature_scaling(testset,scaler)
-X_train, Y_train, X_test, Y_test = random_feature_selection(scaledtrain, scaledtest, test=True)
-smt = SMOTE()
-X_trainsmt, Y_trainsmt = smt.fit_sample(X_train, Y_train)
-multiple_confusion_matrix([logistic], X_trainsmt, Y_trainsmt, X_test, Y_test)
-
-#column feature selection, SMOTE senza scaling
-columns=['Telefono', 'Cap', 'CittadinanzaItaliana', 'NumeroTitoliAperti',
- 'ImportoTitoliAperti', 'ImportoTitoliSaldati', 'NumeroTitoliRecenti',
- 'TitoliCredito', 'RapportoImporto', 'RapportoDovutoAperti']
-X_train, Y_train, X_test, Y_test = column_feature_selection(trainset, columns, testset, test=True)
-smt = SMOTE()
-X_trainsmt, Y_trainsmt = smt.fit_sample(X_train, Y_train)
-multiple_confusion_matrix([logistic], X_trainsmt, Y_trainsmt, X_test, Y_test)
-
-
-target_ids = range(len(trainset.label))
-from matplotlib import pyplot as plt
-colors = 'r', 'g'
-for i, c, label in zip(target_ids, colors, target_ids):
-    plt.scatter(X_2d[y == i, 0], X_2d[y == i, 1], c=c, label=label)
-plt.legend()
-
-# Nearmiss oversampling della classe 1
-nr = NearMiss()
-X_trainnm, Y_trainnm = nr.fit_sample(X_train, Y_train)
-"""
